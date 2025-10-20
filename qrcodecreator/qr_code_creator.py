@@ -1,4 +1,6 @@
 import qrcode
+import random
+import os
 
 class QrCodeCreator:
     def __init__(self, version, boxsize, border, data):
@@ -8,6 +10,8 @@ class QrCodeCreator:
         self.data = data
 
     def create_code(self):
+        id = random.random() * 1000
+        
         qr = qrcode.QRCode(
             version = self.version,
             error_correction = qrcode.constants.ERROR_CORRECT_L,
@@ -19,4 +23,14 @@ class QrCodeCreator:
         qr.make(fit=True)
 
         img = qr.make_image(fill_color="black", back_color="white")
-        img.save('./qrcodes/code2.png')
+
+        folder_path = "./qrcodes"
+
+        for filename in os.listdir(folder_path):
+            id = int(random.random() * 1000)
+            
+            if filename != 'code' + str(id) + '.png':
+                img.save("./qrcodes/code" + str(id) + ".png")
+                break
+
+        # img.save('./qrcodes/code2.png')
