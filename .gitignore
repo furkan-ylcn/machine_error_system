@@ -2,3 +2,5 @@ env
 qrcodes
 .codesandbox
 .devcontainer
+.vscode
+db/db_password.txt
