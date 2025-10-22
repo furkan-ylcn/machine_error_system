@@ -1,15 +1,58 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 
 {% block content %}
-    <div id="errorbuttons">
-        <button>Error1</button>
-        <button>Error2</button>
-        <button>Error3</button>
-        <button>Error4</button>
+
+<div id="submit-machine">
+    <p>Please enter the machine number:</p>
+    <input id="machine-number" type="number">
+    <button onclick="submitMachineNumber()">Submit</button>
+    <div id="message" style="margin-top: 10px;"></div>
+    <div id="qrcode-container" style="margin-top: 20px; display: none;">
+        <h3>Generated QR Code:</h3>
+        <img id="qrcode-image" src="" alt="QR Code" style="border: 1px solid #ccc;">
     </div>
-    <div id="errortextarea">
-        <textarea placeholder="Please enter the error.."></textarea>
-        <button>Submit</button>
-    </div>
+</div>
+
+<script>
+function submitMachineNumber() {
+    const machineNumber = document.getElementById('machine-number').value;
+    const messageDiv = document.getElementById('message');
+    const qrContainer = document.getElementById('qrcode-container');
+    const qrImage = document.getElementById('qrcode-image');
+    
+    if (!machineNumber) {
+        messageDiv.innerHTML = '<p style="color: red;">Please enter a machine number</p>';
+        return;
+    }
+    
+    messageDiv.innerHTML = '<p>Creating QR code...</p>';
+    
+    fetch('/create-qrcode', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ machine_number: parseInt(machineNumber) })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            messageDiv.innerHTML = `<p style="color: green;">${data.message}</p>`;
+            document.getElementById('machine-number').value = '';
+            
+            // Show the QR code
+            qrImage.src = `/qrcode/${machineNumber}?t=${new Date().getTime()}`;
+            qrContainer.style.display = 'block';
+        } else {
+            messageDiv.innerHTML = `<p style="color: red;">${data.message}</p>`;
+            qrContainer.style.display = 'none';
+        }
+    })
+    .catch(error => {
+        messageDiv.innerHTML = `<p style="color: red;">Error: ${error}</p>`;
+        qrContainer.style.display = 'none';
+    });
+}
+</script>
 
 {% endblock %}

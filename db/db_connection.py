@@ -21,4 +21,5 @@ class ConnectDB:
             host=uri,
             server_api=ServerApi('1')
         )
+        
         print("Connected to MongoDB")
