@@ -13,7 +13,6 @@ class QrCodeCreator:
         self.machine_number = machine_number
 
     def create_code(self):
-        # for number in range(1, self.machine_number + 1):
         qr = qrcode.QRCode(
             version = self.version,
             error_correction = qrcode.constants.ERROR_CORRECT_L,
@@ -21,7 +20,9 @@ class QrCodeCreator:
             border = self.border
         )
 
-        qr.add_data("machine" + str(self.machine_number))
+        qr_url = f"http://localhost:5000/errorpage/{self.machine_number}"
+        
+        qr.add_data(qr_url)
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
 

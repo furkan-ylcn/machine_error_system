@@ -93,5 +93,32 @@ def get_qrcode(machine_number):
     except Exception as e:
         return f"Error: {str(e)}", 500
 
+@app.route('/errorpage/<int:machine_number>')
+def error_page(machine_number):
+    return render_template('errorpage.html', 
+                         machine_number=machine_number,
+                         title="Report Error",
+                         year="2025")
+
+@app.route('/submit-error', methods=['POST'])
+def submit_error():
+    try:
+        machine_number = request.json.get('machine_number')
+        error_type = request.json.get('error_type')
+        error_description = request.json.get('error_description')
+        
+        print(f"Machine {machine_number} - Error {error_type}: {error_description}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Error reported successfully'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error submitting report: {str(e)}'
+        })
+
 if __name__ == '__main__':
     app.run(debug=True)
