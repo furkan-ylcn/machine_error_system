@@ -1,17 +1,24 @@
-from pymongo.mongo_client import MongoClient
+from mongoengine import connect
 from pymongo.server_api import ServerApi
+import urllib.parse
 
-with open('./db/db_password.txt', 'r') as file:
-    content = file.read()
-
-uri = "mongodb+srv://furkanyalcin07_db_user:" + content + "@ek-mes.qsfrqrz.mongodb.net/?retryWrites=true&w=majority&appName=EK-MES"
-
-# Create a new client and connect to the server
-client = MongoClient(uri, server_api=ServerApi('1'))
-
-# Send a ping to confirm a successful connection
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
+class ConnectDB:
+    @staticmethod
+    def connect():
+        with open('./db/db_password.txt', 'r') as f:
+            password = f.read().strip()
+        
+        password = urllib.parse.quote(password)
+        
+        uri = (
+            "mongodb+srv://furkanyalcin07_db_user:"
+            f"{password}@ek-mes.qsfrqrz.mongodb.net/"
+            "?retryWrites=true&w=majority&appName=EK-MES"
+        )
+        
+        connect(
+            db='qr_codes_db',
+            host=uri,
+            server_api=ServerApi('1')
+        )
+        print("Connected to MongoDB")
